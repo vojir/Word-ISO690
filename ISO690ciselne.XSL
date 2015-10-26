@@ -569,8 +569,9 @@
                 <xsl:with-param name="LCID" select="$LCID"/>
             </xsl:call-template>
         </xsl:variable>
+    	<xsl:text>str.</xsl:text><!--NOTE: nahrazeno zkratkou 
         <xsl:value-of select="/*/b:Locals/b:Local[@LCID = $_LCID]/b:Strings/b:PagesCountinousShort"
-                />
+                />-->
     </xsl:template>
 
 
@@ -626,7 +627,7 @@
                 <xsl:with-param name="LCID" select="$LCID"/>
             </xsl:call-template>
         </xsl:variable>
-        <xsl:value-of select="/*/b:Locals/b:Local[@LCID = $_LCID]/b:Strings/b:VolumeOfShortCap"/>
+    	<xsl:value-of select="/*/b:Locals/b:Local[@LCID = $_LCID]/b:Strings/b:VolumeOfShortCap"/>
     </xsl:template>
 
 
@@ -1527,7 +1528,10 @@
                 <xsl:with-param name="LCID" select="$LCID"/>
             </xsl:call-template>
         </xsl:variable>
+    	<xsl:text>cit. %1</xsl:text>
+    	<!--NOTE:nahrazeno uvození data citace
         <xsl:value-of select="/*/b:Locals/b:Local[@LCID = $_LCID]/b:Strings/b:CitedCap"/>
+    	-->
     </xsl:template>
 
 
@@ -1698,7 +1702,7 @@
 
 
     <xsl:template name="templ_prop_OpenBracket">
-        <xsl:text>[</xsl:text>
+    	<xsl:call-template name="templ_prop_ISO690_GeneralOpen"/>
         <!--
 		<xsl:param name="LCID"/>
 		<xsl:variable name="_LCID">
@@ -1711,7 +1715,7 @@
 
 
     <xsl:template name="templ_prop_CloseBracket">
-        <xsl:text>]</xsl:text>
+    	<xsl:call-template name="templ_prop_ISO690_GeneralClose"/>
         <!--<xsl:param name="LCID"/>
 		<xsl:variable name="_LCID">
 			<xsl:call-template name="localLCID">
@@ -2561,7 +2565,6 @@
                         </xsl:variable>
 
                         <xsl:element name="p">
-
                             <xsl:attribute name="lang">
                                 <xsl:value-of select="/*/b:Locals/b:Local[@LCID = $LCID]/@Culture"/>
                             </xsl:attribute>
@@ -2613,7 +2616,7 @@
                                                 </xsl:when>
                                                 <xsl:when
                                                         test="string-length($volume) = string-length(translate($volume, $prop_APA_Hyphens, ''))">
-                                                    <xsl:call-template
+                                                	<xsl:call-template
                                                             name="templ_str_VolumeShortUnCap"/>
                                                 </xsl:when>
                                                 <xsl:otherwise>
@@ -2976,16 +2979,15 @@
                                                     <xsl:when
                                                             test="not(string-length($volume) = string-length(translate($volume, ',', '')))">
                                                         <xsl:call-template
-                                                                name="templ_str_VolumesShortCap"/>
+                                                                name="templ_str_VolumesShortUnCap"/>
                                                     </xsl:when>
                                                     <xsl:when
                                                             test="string-length($volume) = string-length(translate($volume, $prop_APA_Hyphens, ''))">
-                                                        <xsl:call-template name="templ_str_VolumeShortCap"
-                                                                />
+                                                        <xsl:call-template name="templ_str_VolumeShortUnCap" /><!--NOTE:uvození bude malými písmeny-->
                                                     </xsl:when>
                                                     <xsl:otherwise>
                                                         <xsl:call-template
-                                                                name="templ_str_VolumesShortCap"/>
+                                                                name="templ_str_VolumesShortUnCap"/>
                                                     </xsl:otherwise>
                                                 </xsl:choose>
                                             </xsl:with-param>
@@ -3070,12 +3072,13 @@
 
                                 <xsl:variable name="Issue">
                                     <xsl:if test="string-length(b:Issue) > 0">
+                                    	<xsl:text>č. </xsl:text>
                                         <xsl:value-of select="b:Issue"/>
                                     </xsl:if>
                                 </xsl:variable>
 
-                                <xsl:variable name="Issues2">
-                                    <xsl:if test="string-length(b:Issue) > 0">
+                            	<xsl:variable name="Issues2">
+                            		<xsl:if test="string-length(b:Issue) > 0">
                                         <xsl:value-of select="b:Issue"/>
                                         <xsl:call-template name="templ_prop_ListSeparator"/>
 
@@ -3136,7 +3139,7 @@
                                         </xsl:call-template>
                                     </xsl:if>
                                     <xsl:call-template name="templ_prop_ISO690_GeneralOpen"/>
-                                    <xsl:call-template name="templ_str_OnlineCap"/>
+                                    <xsl:call-template name="templ_str_OnlineUnCap"/>
                                     <xsl:call-template name="templ_prop_ISO690_GeneralClose"/>
                                     <xsl:call-template name="templ_prop_Space"/>
                                 </xsl:variable>
@@ -3467,7 +3470,7 @@
 										</xsl:when>-->
                                         <xsl:otherwise>
                                             <xsl:if test="string-length($MainDot)>0">
-                                                <b style="color:red;">
+                                                <b>
                                                     <xsl:copy-of select="$MainDot"/>
                                                 </b>
                                                 <xsl:call-template name="templ_prop_Space"/>
@@ -3494,8 +3497,7 @@
                                             </xsl:call-template>
 
                                             <xsl:value-of select="$SpacePPagesDot"/>
-
-                                            <xsl:call-template name="PrintSpaceAndList">
+                                        	<xsl:call-template name="PrintSpaceAndList">
                                                 <xsl:with-param name="list">
                                                     <Items>
                                                         <TextItem>
@@ -3596,6 +3598,8 @@
                                                 </xsl:with-param>
                                             </xsl:call-template>
                                             <xsl:value-of select="$Comments"/>
+                                        	<xsl:value-of select="$URL"/>
+                                        	<xsl:value-of select="$StandardNumber"/>
                                         </xsl:when>
 
                                         <xsl:when test="b:SourceType = 'ConferenceProceedings'">
@@ -4043,7 +4047,6 @@
         </xsl:variable>
 
         <xsl:variable name="cMaxAllow">
-
             <xsl:choose>
                 <xsl:when test="$cMaxAuthor > ../b:_MaxAuthor and ../b:_MaxAuthor > 0">
                     <xsl:value-of select="../b:_MaxAuthor"/>
@@ -4055,7 +4058,7 @@
         </xsl:variable>
 
         <xsl:choose>
-            <xsl:when test="$cMaxAuthor > 3">
+            <xsl:when test="$cMaxAuthor > 3"><!--XXX = 3 -->
                 <!--XXX-->
                 <xsl:variable name="noCommaBeforeAnd">
                     <xsl:call-template name="templ_prop_NoCommaBeforeAnd"/>
@@ -4103,7 +4106,7 @@
 
         <xsl:variable name="cIsEtAl">
             <xsl:choose>
-                <xsl:when test="count(b:NameList/b:Person[4]) > 0">
+                <xsl:when test="count(b:NameList/b:Person[4]) > 0"><!--XXX kontrola, jestli je hodně autorů-->
                     <xsl:value-of select="1"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -4617,7 +4620,8 @@
 						b:SourceType = 'Case' or
 						b:SourceType = 'Report' or
 						b:SourceType = 'Misc'">
-                    <xsl:choose>
+                    
+                		<xsl:choose>
                         <xsl:when
                                 test="string-length(b:City) > 0 or (string-length(b:Theater) > 0 and b:SourceType = 'Performance')"></xsl:when>
                         <xsl:otherwise>
@@ -4653,7 +4657,6 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-
                 </xsl:when>
             </xsl:choose>
         </xsl:variable>
@@ -4677,6 +4680,8 @@
 						b:SourceType = 'Case' or
 						b:SourceType = 'Report' or
 						b:SourceType = 'Misc'">
+
+					<xsl:variable name="before">
 
                     <xsl:if test="b:SourceType = 'Art'">
                         <xsl:value-of select="b:Institution"/>
@@ -4726,8 +4731,9 @@
                             <xsl:if test="b:SourceType = 'Art' and string-length(b:Institution) > 0">
                                 <xsl:call-template name="templ_prop_ListSeparator"/>
                             </xsl:if>
+                        	<!--XXX NOTE: odebrána informace o neznámém místě
                             <xsl:call-template name="templ_str_SineLocoShort"/>
-
+							-->
 
                         </xsl:otherwise>
                     </xsl:choose>
@@ -4765,6 +4771,8 @@
                         </xsl:if>
                     </xsl:if>
 
+
+                	</xsl:variable>
 
                     <xsl:variable name="after">
                         <xsl:choose>
@@ -4832,21 +4840,20 @@
                             </xsl:when>
                             <xsl:when
                                     test="string-length(b:Broadcaster) = 0 and b:SourceType = 'Interview'"></xsl:when>
-                            <xsl:otherwise>
+                           <!--XXX NOTE:odstranění informace o neznámém místě
+                           	<xsl:otherwise>
                                 <xsl:call-template name="templ_str_SineNomineShort"/>
-
-
-                            </xsl:otherwise>
+                            </xsl:otherwise>-->
                         </xsl:choose>
                     </xsl:variable>
 
+					<xsl:value-of select="$before"/>
+
                     <xsl:if test="string-length(normalize-space($after)) > 0">
-
-                        <xsl:call-template name="templ_prop_NonBreakingSpace"/>
-                        <xsl:call-template name="templ_prop_EnumSeparator"/>
+                    	<xsl:if test="string-length(normalize-space($before))">
+                    		<xsl:call-template name="templ_prop_EnumSeparator"/>
+                    	</xsl:if>
                         <xsl:value-of select="$after"/>
-
-
                     </xsl:if>
                 </xsl:when>
 
@@ -4912,7 +4919,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template name="formatDayMonthYearAccessed">
+    <xsl:template name="formatDayMonthYearAccessed"><!--FIXME-->
         <xsl:if
                 test="string-length(b:DayAccessed) > 0 or string-length(b:DayAccessed) > 0 or string-length(b:DayAccessed) > 0">
             <xsl:call-template name="templ_prop_ISO690_GeneralOpen"/>
@@ -4951,7 +4958,7 @@
             <xsl:variable name="cited">
                 <xsl:call-template name="templ_str_CitedCap"/>
             </xsl:variable>
-            <xsl:call-template name="StringFormatDot">
+            <xsl:call-template name="StringFormat">
                 <xsl:with-param name="format" select="$cited"/>
                 <xsl:with-param name="parameters">
                     <t:params>
